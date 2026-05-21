@@ -58,7 +58,7 @@
   (eval-when-compile
     (list (concat (regexp-opt '(".elc" ".pyc")) "\\'") ; byte-compiled codes
           (rx "/share/" (+ any) "/site-lisp/") ; (maybe system wide) emacs bundled lisp directory
-          (rx "/.emacs.d/" (or "el-get" "elpa") "/") ; installed lisp directory each user
+          (rx (literal (expand-file-name user-emacs-directory)) (or "el-get" "elpa") "/") ; installed lisp directory each user
           (rx "/" (or ".bundle" ".cask") "/") ; project specific bundled packaged
           ))
   "List of buffer filename prefix regexp patterns to apply read-only."
