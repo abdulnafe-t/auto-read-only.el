@@ -104,8 +104,8 @@ When `auto-read-only-mode' is enabled, this function is added to
   nil auto-read-only-mode-lighter nil
   :global t
   (if auto-read-only-mode
-      (push #'auto-read-only--maybe-activate window-buffer-change-functions)
-    (setq window-buffer-change-functions (delq #'auto-read-only--maybe-activate window-buffer-change-functions))))
+      (add-hook 'window-buffer-change-functions #'auto-read-only--maybe-activate )
+    (remove-hook 'window-buffer-change-functions #'auto-read-only--maybe-activate)))
 
 ;;;###autoload
 (defun auto-read-only ()
