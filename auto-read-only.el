@@ -80,7 +80,9 @@
 ;;;###autoload
 (define-minor-mode auto-read-only-mode
   "Minor mode for appply auto-read-only."
-  nil auto-read-only-mode-lighter nil
+  :init-value nil
+  :lighter auto-read-only-mode-lighter
+  :kemap nil
   :global t
   (if auto-read-only-mode
       (add-hook 'find-file-hook #'auto-read-only--hook-find-file)
