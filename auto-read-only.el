@@ -75,13 +75,6 @@
   "Activate `auto-read-only' in the buffer displayed in WINDOW-OR-FRAME, if
 appropriate.
 
-Specifically, activate `auto-read-only' if the buffer in question:
-
- 1) is visiting a file which matches one of the regexps in
- `auto-read-only-file-regexps', and
-
- 2) that file is not part of a project.
-
 The fact that the buffer is being viewed by WINDOW-OR-FRAME means that
 it has not been visited programmatically, and so lisp code that visits
 files non-interactively should be unaffected.
@@ -109,7 +102,15 @@ When `auto-read-only-mode' is enabled, this function is added to
 
 ;;;###autoload
 (defun auto-read-only ()
-  "Apply read-only mode to the current buffer."
+  "Apply read-only mode to the current buffer.
+
+Specifically, activate read-only mode if the current buffer:
+
+ 1) is visiting a file which matches one of the regexps in
+ `auto-read-only-file-regexps', and
+
+ 2) that file is not part of a project."
+
   (when (and buffer-file-name
              (cl-loop for regexp in auto-read-only-file-regexps
                       thereis (string-match-p regexp buffer-file-name))
