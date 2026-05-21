@@ -109,14 +109,14 @@ When `auto-read-only-mode' is enabled, this function is added to
 
 ;;;###autoload
 (defun auto-read-only ()
-"Apply read-only mode to the current buffer."
-(when (and buffer-file-name
-           (cl-loop for regexp in auto-read-only-file-regexps
-                    thereis (string-match-p regexp buffer-file-name))
-           (not (cdr (project-current))))
-  (if auto-read-only-function
-      (funcall auto-read-only-function)
-    (view-mode 1))))
+  "Apply read-only mode to the current buffer."
+  (when (and buffer-file-name
+             (cl-loop for regexp in auto-read-only-file-regexps
+                      thereis (string-match-p regexp buffer-file-name))
+             (not (cdr (project-current))))
+    (if auto-read-only-function
+        (funcall auto-read-only-function)
+      (view-mode 1))))
 
 (provide 'auto-read-only)
 ;;; auto-read-only.el ends here
