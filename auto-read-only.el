@@ -71,11 +71,11 @@
 
 (defvar auto-read-only-mode-lighter " AutoRO")
 
-(defun auto-read-only (window-or-frame)
-  "Enable `view-mode' in the buffer displayed in WINDOW-OR-FRAME, if
+(defun auto-read-only--maybe-activate (window-or-frame)
+  "Activate `auto-read-only' in the buffer displayed in WINDOW-OR-FRAME, if
 appropriate.
 
-Specifically, enable `view-mode' if the buffer in question:
+Specifically, activate `auto-read-only' if the buffer in question:
 
  1) is visiting a file which matches one of the regexps in
  `auto-read-only-file-regexps', and
@@ -96,13 +96,7 @@ When `auto-read-only-mode' is enabled, this function is added to
                  ((framep window-or-frame)
                   (window-buffer (frame-selected-window window-or-frame))))))
     (with-current-buffer buffer
-      (when (and buffer-file-name
-                 (cl-loop for regexp in auto-read-only-file-regexps
-                          thereis (string-match-p regexp buffer-file-name))
-                 (not (cdr (project-current))))
-        (if auto-read-only-function
-            (funcall auto-read-only-function)
-          (view-mode 1))))))
+      (auto-read-only))))
 
 ;;;###autoload
 (define-minor-mode auto-read-only-mode
@@ -110,8 +104,19 @@ When `auto-read-only-mode' is enabled, this function is added to
   nil auto-read-only-mode-lighter nil
   :global t
   (if auto-read-only-mode
-      (push #'auto-read-only window-buffer-change-functions)
-    (setq window-buffer-change-functions (delq #'auto-read-only window-buffer-change-functions))))
+      (push #'auto-read-only--maybe-activate window-buffer-change-functions)
+    (setq window-buffer-change-functions (delq #'auto-read-only--maybe-activate window-buffer-change-functions))))
+
+;;;###autoload
+(defun auto-read-only ()
+"Apply read-only mode to the current buffer."
+(when (and buffer-file-name
+           (cl-loop for regexp in auto-read-only-file-regexps
+                    thereis (string-match-p regexp buffer-file-name))
+           (not (cdr (project-current))))
+  (if auto-read-only-function
+      (funcall auto-read-only-function)
+    (view-mode 1))))
 
 (provide 'auto-read-only)
 ;;; auto-read-only.el ends here
