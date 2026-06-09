@@ -1,10 +1,12 @@
 ;;; auto-read-only.el --- Automatically activate read-only-mode  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2017 USAMI Kenta
+;; Copyright (C) 2026 Abdulnafé Toulaïmat
 
-;; Author: USAMI Kenta <tadsan@zonu.me>
+;; Author: USAMI Kenta <tadsan@zonu.me>,
+;;         Abdulnafé Toulaïmat <abdulnafe.toulaimat@gmail.com>
 ;; Created: 4 Mar 2017
-;; Version: 0.0.1
+;; Version: 0.1.0
 ;; Keywords: files, convenience
 ;; Homepage: https://github.com/zonuexe/auto-read-only.el
 ;; Package-Requires: ((emacs "27.1") (cl-lib "0.5"))
