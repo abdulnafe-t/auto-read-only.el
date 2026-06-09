@@ -30,3 +30,5 @@ It has large default settings, more flexible and has compatibility with a wide r
 =auto-read-only= works with a simple mechanism based on Emacs’s built-in hook
 =window-buffer-change-functions=. It provides an otherwise unobtrusive global minor mode,
 and does not interfere with non-interactive Emacs Lisp code (ex. =package-install=).
+
+There is also =read-only-cfg=, which very similar to this package, but provides more fine-grained commands for customization. 
