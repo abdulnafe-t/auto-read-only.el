@@ -81,6 +81,14 @@ non-nil value instead."
   :type '(choice (const    :tag "Unspecified (default to use `read-only-mode')" nil)
                  (function :tag "Arbitrary function/minor-mode analogous to read-only.")))
 
+(defcustom auto-read-only-protect-projects nil
+  "Nil (the default) means to let buffers visiting project files be
+editable, even if they would otherwise match
+`auto-read-only-file-regexps'.
+
+Non-nil means to treat such buffers like any other."
+  :type 'boolean)
+
 (defvar auto-read-only-mode-lighter " AutoRO")
 
 (defun auto-read-only--maybe-activate (window-or-frame)
@@ -111,8 +119,8 @@ The conditions to enable `read-only-mode' in a given buffer are:
 1) the buffer must be visiting a file, and
 2) that file’s name must match one of the regexps in `auto-read-only-file-regexps', which see.
 
-Files that are part of a project are given special treatment: they are
-not set to read-only by default."
+Files that are part of a project may be exempt from this based on the
+user option `auto-read-only-protect-projects', which see."
 
   :init-value nil
   :lighter auto-read-only-mode-lighter
@@ -126,18 +134,18 @@ not set to read-only by default."
 (defun auto-read-only ()
   "Activate `read-only-mode' in the current buffer.
 
-Specifically, activate read-only mode if the current buffer:
+Specifically, activate read-only mode if the current buffer is visiting
+ a file which matches one of the regexps in
+ `auto-read-only-file-regexps'.
 
-1) is visiting a file, which
-
-2) matches one of the regexps in `auto-read-only-file-regexps', and
-
-3) that file is not part of a project."
+Files that are part of a project are exempt if
+ `auto-read-only-protect-projects' is nil (the default)."
 
   (when (and buffer-file-name
              (cl-loop for regexp in auto-read-only-file-regexps
                       thereis (string-match-p regexp buffer-file-name))
-             (not (cdr (project-current))))
+             (or auto-read-only-protect-projects
+                 (not (project-current))))
     (if auto-read-only-function
         (funcall auto-read-only-function)
       (read-only-mode 1))))
