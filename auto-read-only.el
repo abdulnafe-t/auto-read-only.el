@@ -1,4 +1,4 @@
-;;; auto-read-only.el --- Automatically make the buffer to read-only  -*- lexical-binding: t; -*-
+;;; auto-read-only.el --- Automatically activate read-only-mode  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2017 USAMI Kenta
 
@@ -26,19 +26,27 @@
 
 ;;; Commentary:
 
-;; Automatically make the buffer-file to read-only based on `buffer-file-name'.
-;; For example, it can protect library code provided by third parties.
+;; Automatically activate `read-only-mode' in buffers which are viewing files, if those
+;; files’ names match one of the regexps in `auto-read-only-file-regexps'. For example,
+;; this can be used to protect library code provided by third parties.
 ;;
 ;; Setup:
 ;;
-;; put into your own =.emacs= file (=init.el=)
+;; put into your =.emacs= file (=init.el=)
 ;;
 ;;     (require 'auto-read-only)
 ;;     (auto-read-only-mode 1)
 ;;
+;;
+;; Or, with `use-package':
+;;
+;;     (use-package auto-read-only
+;;       :init
+;;       (auto-read-only-mode 1))
+;;
 ;; Customize:
 ;;
-;;     ;; Third party codes are installed in vendor/ directory.
+;;     ;; Automatically activate `read-only-mode' in /vendor/ directories
 ;;     (add-to-list 'auto-read-only-file-regexps "/vendor/")
 ;;
 
@@ -50,24 +58,28 @@
   (require 'rx))
 
 (defgroup auto-read-only ()
-  "Automatically make the buffer read-only."
+  "Automatically activate `read-only-mode'."
   :prefix "auto-read-only-"
   :group 'editing)
 
 (defcustom auto-read-only-file-regexps
-  (eval-when-compile
-    (list (concat (regexp-opt '(".elc" ".pyc")) "\\'") ; byte-compiled codes
+    (list (concat (regexp-opt '(".elc" ".pyc")) "\\'") ; byte-compiled code
           (rx "/share/" (+ any) "/site-lisp/") ; (maybe system wide) emacs bundled lisp directory
-          (rx (literal (expand-file-name user-emacs-directory)) (or "el-get" "elpa") "/") ; installed lisp directory each user
-          (rx "/" (or ".bundle" ".cask") "/") ; project specific bundled packaged
+          (rx (literal (expand-file-name user-emacs-directory)) (or "el-get" "elpa") "/") ; user’s package directory
+          (rx "/" (or ".bundle" ".cask") "/") ; project specific bundled packages
           ))
-  "List of buffer filename prefix regexp patterns to apply read-only."
+  "List of filename regexp patterns to enable `read-only-mode' in."
   :type '(repeat regexp))
 
 (defcustom auto-read-only-function nil
-  "Fuction for make the buffer read-only."
-  :type '(choice (const    :tag "No specific (default to use `read-only-mode')" nil)
-                 (function :tag "Arbitrary function/minor-mode like read-only.")))
+  "Function to call to make buffers read-only. The default value, nil,
+means to use `read-only-mode'.
+
+`view-mode' stands out as another possibility. If you want to use that,
+however, consider setting the builtin variable `view-read-only' to a
+non-nil value instead."
+  :type '(choice (const    :tag "Unspecified (default to use `read-only-mode')" nil)
+                 (function :tag "Arbitrary function/minor-mode analogous to read-only.")))
 
 (defvar auto-read-only-mode-lighter " AutoRO")
 
@@ -80,7 +92,7 @@ it has not been visited programmatically, and so lisp code that visits
 files non-interactively should be unaffected.
 
 When `auto-read-only-mode' is enabled, this function is added to
-`window-buffer-change-functions' (which see)."
+`window-buffer-change-functions', which see."
 
   (let ((buffer (cond
                  ((windowp window-or-frame)
@@ -93,7 +105,15 @@ When `auto-read-only-mode' is enabled, this function is added to
 
 ;;;###autoload
 (define-minor-mode auto-read-only-mode
-  "Minor mode for appply auto-read-only."
+  "Minor mode that automatically activates `read-only-mode' in certain buffers.
+
+The conditions to enable `read-only-mode' in a given buffer are:
+1) the buffer must be visiting a file, and
+2) that file’s name must match one of the regexps in `auto-read-only-file-regexps', which see.
+
+Files that are part of a project are given special treatment: they are
+not set to read-only by default."
+
   :init-value nil
   :lighter auto-read-only-mode-lighter
   :keymap nil
@@ -104,14 +124,15 @@ When `auto-read-only-mode' is enabled, this function is added to
 
 ;;;###autoload
 (defun auto-read-only ()
-  "Apply read-only mode to the current buffer.
+  "Activate `read-only-mode' in the current buffer.
 
 Specifically, activate read-only mode if the current buffer:
 
- 1) is visiting a file which matches one of the regexps in
- `auto-read-only-file-regexps', and
+1) is visiting a file, which
 
- 2) that file is not part of a project."
+2) matches one of the regexps in `auto-read-only-file-regexps', and
+
+3) that file is not part of a project."
 
   (when (and buffer-file-name
              (cl-loop for regexp in auto-read-only-file-regexps
