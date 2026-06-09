@@ -66,7 +66,7 @@
 
 (defcustom auto-read-only-function nil
   "Fuction for make the buffer read-only."
-  :type '(choice (const    :tag "No specific (default to use `view-mode')" nil)
+  :type '(choice (const    :tag "No specific (default to use `read-only-mode')" nil)
                  (function :tag "Arbitrary function/minor-mode like read-only.")))
 
 (defvar auto-read-only-mode-lighter " AutoRO")
@@ -119,7 +119,7 @@ Specifically, activate read-only mode if the current buffer:
              (not (cdr (project-current))))
     (if auto-read-only-function
         (funcall auto-read-only-function)
-      (view-mode 1))))
+      (read-only-mode 1))))
 
 (provide 'auto-read-only)
 ;;; auto-read-only.el ends here
