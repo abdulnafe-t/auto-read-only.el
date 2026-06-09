@@ -28,9 +28,9 @@
 
 ;;; Commentary:
 
-;; Automatically activate `read-only-mode' in buffers which are viewing files, if those
-;; files’ names match one of the regexps in `auto-read-only-file-regexps'. For example,
-;; this can be used to protect library code provided by third parties.
+;; Automatically activate `read-only-mode' in file-viewing buffers, if those files’ names
+;; match one of the regexps in `auto-read-only-file-regexps'. For example, this can be
+;; used to protect library code provided by third parties.
 ;;
 ;; Setup:
 ;;
