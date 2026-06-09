@@ -119,8 +119,11 @@ When `auto-read-only-mode' is enabled, this function is added to
   "Minor mode that automatically activates `read-only-mode' in certain buffers.
 
 The conditions to enable `read-only-mode' in a given buffer are:
+
 1) the buffer must be visiting a file, and
-2) that file’s name must match one of the regexps in `auto-read-only-file-regexps', which see.
+
+2) that file’s name must match one of the regexps in
+`auto-read-only-file-regexps', which see.
 
 Files that are part of a project may be exempt from this based on the
 user option `auto-read-only-protect-projects', which see."
