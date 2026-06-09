@@ -63,11 +63,11 @@
   :group 'editing)
 
 (defcustom auto-read-only-file-regexps
-    (list (concat (regexp-opt '(".elc" ".pyc")) "\\'") ; byte-compiled code
-          (rx "/share/" (+ any) "/site-lisp/") ; (maybe system wide) emacs bundled lisp directory
-          (rx (literal (expand-file-name user-emacs-directory)) (or "el-get" "elpa") "/") ; user’s package directory
-          (rx "/" (or ".bundle" ".cask") "/") ; project specific bundled packages
-          ))
+  (list (concat (regexp-opt '(".elc" ".pyc")) "\\'") ; byte-compiled code
+        (rx "/share/" (+ any) "/site-lisp/") ; (maybe system wide) emacs bundled lisp directory
+        (rx (literal (expand-file-name user-emacs-directory)) (or "el-get" "elpa") "/") ; user’s package directory
+        (rx "/" (or ".bundle" ".cask") "/") ; project specific bundled packages
+        )
   "List of filename regexp patterns to enable `read-only-mode' in."
   :type '(repeat regexp))
 
