@@ -1,26 +1,33 @@
 * auto-read-only.el
-Automatically make the buffer-file to read-only based on =buffer-file-name=.
-For example, it can protect library code provided by third parties.
+Automatically activate `read-only-mode' in file-viewing buffers, if those files’ names
+match one of the regexps in `auto-read-only-file-regexps'. For example, this can be
+used to protect library code provided by third parties.
 
 ** Setup
-put into your own =.emacs= file (=init.el=)
+Put this into your =.emacs= file (=init.el=):
 
-#+BEGIN_SRC emacs-lisp
-(require 'auto-read-only)
-(auto-read-only-mode 1)
-#+END_SRC
+#+begin_src emacs-lisp
+  (require 'auto-read-only)
+  (auto-read-only-mode 1)
+#+end_src
+
+Or, with `use-package':
+#+begin_src emacs-lisp
+  (use-package auto-read-only
+    :init
+    (auto-read-only-mode 1))
+#+end_src
 
 ** Customize
+#+begin_src elisp
+  ;; Automatically activate `read-only-mode' in /vendor/ directories
+  (add-to-list 'auto-read-only-file-regexps "/vendor/")
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
-;; Third party codes are installed in vendor/ directory.
-(add-to-list 'auto-read-only-file-regexps "/vendor/")
-#+END_SRC
-
-** Competitor
+** Alternatives
 [[https://github.com/rolandwalker/hardhat][hardhat]] is a package similar to =auto-read-only.el=.
 It has large default settings, more flexible and has compatibility with a wide range of Emacs versions.
 
-=auto-read-only= works with a simple mechanism based on emacs’s built-in hook =window-buffer-change-functions=.
-It provides a minor mode, but it is not important.
-It also does not interfere with the behavior of non-interactive Emacs Lisp codes (ex. =package-install=).
+=auto-read-only= works with a simple mechanism based on emacs’s built-in hook
+=window-buffer-change-functions=. It provides an otherwise unobtrusive global minor mode,
+and does not interfere with non-interactive Emacs Lisp code (ex. =package-install=).
