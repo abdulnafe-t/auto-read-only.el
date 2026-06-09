@@ -96,7 +96,7 @@ When `auto-read-only-mode' is enabled, this function is added to
   "Minor mode for appply auto-read-only."
   :init-value nil
   :lighter auto-read-only-mode-lighter
-  :kemap nil
+  :keymap nil
   :global t
   (if auto-read-only-mode
       (add-hook 'window-buffer-change-functions #'auto-read-only--maybe-activate )
